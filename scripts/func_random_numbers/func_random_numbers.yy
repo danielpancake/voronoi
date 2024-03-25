@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"func_random_numbers",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"func_random_numbers",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
