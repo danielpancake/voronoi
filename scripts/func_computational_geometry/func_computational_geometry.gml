@@ -175,7 +175,7 @@ function voronoi_from_delanay(_points, _triangulation, _bbox = undefined) {
   for (var _i = 0; _i < _points_n; ++_i) {
     var _p = _points[_i];
     var _triangles = _triangles_lookup[? _p];
-
+    
     array_sort(_triangles, method({_p, _triangulation}, function(_idx1, _idx2) {
       var _el1 = _triangulation[_idx1];
       var _el2 = _triangulation[_idx2];
@@ -318,6 +318,13 @@ function voronoi_in_rect(_voronoi, _rect) {
       array_delete(_voronoi, _n, 1);
       --_voronoi_n;
     }
+  }
+
+  for (var _i = 0; _i < _voronoi_n; ++_i) {
+    var _site = _voronoi[_i].site;
+
+    _site.x = clamp(_site.x, _rect.left, _rect.right);
+    _site.y = clamp(_site.y, _rect.top, _rect.bottom);
   }
 }
 

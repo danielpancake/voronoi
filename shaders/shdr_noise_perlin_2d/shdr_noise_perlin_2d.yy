@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"shdr_noise_perlin_2d",
+  "name":"shdr_noise_perlin_2d",
+  "parent":{
+    "name":"Shaders",
+    "path":"folders/Shaders.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

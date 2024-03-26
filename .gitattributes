@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+*.yy    text eol=crlf
+*.yyp   text eol=crlf
+*.gml   text eol=crlf
+*.yy    linguist-language=Json
