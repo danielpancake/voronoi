@@ -14,11 +14,11 @@ buffer = buffer_create(sqr(size), buffer_fixed, 1);
 generated = false;
 surf = -1;
 
-/// DEBUG
+// DEBUG
 _debug_surf_off = 0;
 
 var _id = id;
 with (oPerlinGenerator) {
-  if (id == _id) continue; 
-  _debug_surf_off += size;
+  if (id == _id) continue;
+  _debug_surf_off += size + 1;
 }

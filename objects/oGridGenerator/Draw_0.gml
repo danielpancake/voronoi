@@ -7,7 +7,23 @@ draw_text(room_width / 2, 8, seed);
 draw_set_color(BiomeType.Water);
 draw_rectangle(off_w, off_h, off_w + w, off_h + h, false);
 
-for (var _i = 0; _i < array_length(voronoi); ++_i) {
+// Draw progress bar
+if (!done) {
+  draw_healthbar(
+    8,
+    room_height - 16,
+    room_width - 8,
+    room_height - 8,
+    (step / 9) * 100,
+    c_black, c_red, c_lime,
+    0,
+    true, true
+  );
+  exit;
+}
+
+var _len = array_length(voronoi);
+for (var _i = 0; _i < _len; ++_i) {
   var _el = voronoi[_i];
   var _polygon = array_length(_el.polygon);
   
@@ -15,8 +31,8 @@ for (var _i = 0; _i < array_length(voronoi); ++_i) {
   for (var _j = 0; _j < _polygon + 1; ++_j) {
     var _edge = _el.polygon[_j % _polygon];
     
-    draw_vertex_color(_edge[0].x, _edge[0].y, _el.biome, 1);
-    draw_vertex_color(_el.site.x, _el.site.y, _el.biome, 1);
+    draw_vertex_color(_edge[0].x + off_w, _edge[0].y + off_h, _el.biome, 1);
+    draw_vertex_color(_el.site.x + off_w, _el.site.y + off_h, _el.biome, 1);
   }
   draw_primitive_end();
 }
@@ -51,4 +67,3 @@ for (var _i = 0; _i < array_length(voronoi); ++_i) {
 //     draw_arrow(_edge[0].x, _edge[0].y, _edge[1].x, _edge[1].y, 10);
 //   }
 // }
-

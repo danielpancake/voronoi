@@ -1,26 +1,76 @@
 /// @desc Await for noise generation
-switch (state) {
-  case WorldGenerationState.AwaitNoise:
-    if (noise_elevation.generated && noise_elevation_buffer == -1) {
-      noise_elevation_buffer = noise_elevation.buffer;
+var _t = get_timer();
+switch (step) {
+  case 0:
+    var _halton_2d = [new Halton(2, seed), new Halton(3, seed)];
+    
+    // Populate point list
+    repeat (400) {
+      var _x = _halton_2d[0].get_next() * w;
+      var _y = _halton_2d[1].get_next() * h;
+      array_push(points, new Point2D(_x, _y));
     }
     
-    if (noise_temperature.generated && noise_temperature_buffer == -1) {
-      noise_temperature_buffer = noise_temperature.buffer;
+    // Add bounds
+    array_push(points, new Point2D(-off_w, -off_h));
+    array_push(points, new Point2D(w + off_w, -off_h));
+    array_push(points, new Point2D(-off_w, h + off_h));
+    array_push(points, new Point2D(w + off_w, h + off_h));
+    
+    alarm[0] = 1;
+    ++step;
+  break;
+  
+  case 1:
+  case 2:
+  case 3:
+    delaunay = delaunay_bowyer_watson(points, 512);
+    voronoi = voronoi_from_delanay(points, delaunay);
+    points = lloyd_relaxation(voronoi);
+    
+    alarm[0] = 1;
+    ++step;
+  break;
+  
+  case 4:
+    // NOTE: has some problems with corner cases
+    voronoi_in_rect(voronoi, new Rect(0, 0, w,  h));
+    
+    // Init cell params
+    for (var _i = 0; _i < array_length(voronoi); ++_i) {
+      var _el = voronoi[_i];
+      
+      _el.temperature_colour = c_black;
+      _el.precipitation_colour = c_black;
+      
+      _el.biome = BiomeType.Water;
+    }
+    
+    alarm[0] = 1;
+    ++step;
+  break;
+  
+  case 5:
+    if (noise_elevation.generated && noise_elevation_buffer == -1) {
+      noise_elevation_buffer = noise_elevation.buffer;
     }
     
     if (noise_precipitation.generated && noise_precipitation_buffer == -1) {
       noise_precipitation_buffer = noise_precipitation.buffer;
     }
     
-    if (noise_elevation_buffer != -1 && noise_temperature_buffer != -1 && noise_precipitation_buffer != -1) {
-      state = WorldGenerationState.ApplyTransforms;
+    if (noise_temperature.generated && noise_temperature_buffer == -1) {
+      noise_temperature_buffer = noise_temperature.buffer;
+    }
+    
+    if (noise_elevation_buffer != -1 && noise_precipitation_buffer != -1 && noise_temperature_buffer != -1) {
+      ++step;
     }
     
     alarm[0] = 1;
   break;
-
-  case WorldGenerationState.ApplyTransforms:
+  
+  case 6:
     var _min = 255;
     var _max = 0;
     
@@ -79,17 +129,17 @@ switch (state) {
     }
     #endregion
     
-    state = WorldGenerationState.Sampling;
     alarm[0] = 1;
+    ++step;
   break;
   
-  case WorldGenerationState.Sampling:
+  case 7:
     #region Sample land/water from elevation noise
     for (var _i = 0; _i < array_length(voronoi); ++_i) {
       var _el = voronoi[_i];
       
-      var _x = floor((_el.site.x - off_w) / w * (noise_size - 1));
-      var _y = floor((_el.site.y - off_h) / h * (noise_size - 1));
+      var _x = floor((_el.site.x / w) * (noise_size - 1));
+      var _y = floor((_el.site.y / h) * (noise_size - 1));
       
       var _v = buffer_peek(noise_elevation_buffer, _x + _y * noise_size, buffer_u8);
       
@@ -112,8 +162,8 @@ switch (state) {
         
         var _k = 0;
         repeat (2) {
-          var _ex = _edge[_k].x - off_w
-          var _ey = _edge[_k].y - off_h;
+          var _ex = _edge[_k].x;
+          var _ey = _edge[_k].y;
           
           if (_ex == 0 || _ex == w || _ey == 0 || _ey == h) {
             _frontier = true;
@@ -128,17 +178,17 @@ switch (state) {
     }
     #endregion
     
-    state = WorldGenerationState.Normalization;
     alarm[0] = 1;
+    ++step;
   break;
   
-  case WorldGenerationState.Normalization:
+  case 8:
     var _min_prec = 255;
     var _min_temp = 255;
     
     var _max_prec = 0;
     var _max_temp = 0;
-  
+    
     #region Normalize between 0 and 255
     buffer_seek(noise_elevation_buffer, buffer_seek_start, 0);
     
@@ -164,17 +214,21 @@ switch (state) {
     buffer_normalize_values(noise_temperature_buffer, buffer_u8, sqr(noise_size), _min_temp, _max_temp, 0, 255);
     #endregion
     
-    state = WorldGenerationState.BiomePicking;
+    noise_elevation.surf = -1;
+    noise_precipitation.surf = -1;
+    noise_temperature.surf = -1;
+    
     alarm[0] = 1;
+    ++step;
   break;
   
-  case WorldGenerationState.BiomePicking:
+  case 9:
     #region Assign biomes based on temperature and precipitation
     for (var _i = 0; _i < array_length(voronoi); ++_i) {
       var _el = voronoi[_i];
       
-      var _x = floor((_el.site.x - off_w) / w * (noise_size - 1));
-      var _y = floor((_el.site.y - off_h) / h * (noise_size - 1));
+      var _x = floor((_el.site.x / w) * (noise_size - 1));
+      var _y = floor((_el.site.y / h) * (noise_size - 1));
       
       var _temp = buffer_peek(noise_temperature_buffer, _x + _y * noise_size, buffer_u8);
       var _prec = buffer_peek(noise_precipitation_buffer, _x + _y * noise_size, buffer_u8);
@@ -188,10 +242,18 @@ switch (state) {
     }
     #endregion
     
-    state = -1;
+    alarm[0] = 1;
+    ++step;
+    
+    done = true;
+  break;
+  
+  case 10:
+    //instance_destroy(noise_elevation);
+    //instance_destroy(noise_precipitation);
+    //instance_destroy(noise_temperature);
+    
+    ++step;
   break;
 }
-
-noise_elevation.surf = -1;
-noise_precipitation.surf = -1;
-noise_temperature.surf = -1;
+show_debug_message($"Step {step} took {(get_timer() - _t) / 1000} ms");
