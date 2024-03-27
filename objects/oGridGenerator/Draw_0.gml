@@ -1,10 +1,11 @@
 /// @desc Draw output data
 draw_set_alpha(1);
 draw_set_color(c_white);
-draw_text(32, 32, seed);
+draw_set_halign(fa_center);
+draw_text(room_width / 2, 8, seed);
 
-draw_set_color(c_blue);
-draw_rectangle(off_w, off_h, off_w + w, off_h + h, true);
+draw_set_color(BiomeType.Water);
+draw_rectangle(off_w, off_h, off_w + w, off_h + h, false);
 
 for (var _i = 0; _i < array_length(voronoi); ++_i) {
   var _el = voronoi[_i];
@@ -13,9 +14,9 @@ for (var _i = 0; _i < array_length(voronoi); ++_i) {
   draw_primitive_begin(pr_trianglestrip);
   for (var _j = 0; _j < _polygon + 1; ++_j) {
     var _edge = _el.polygon[_j % _polygon];
-  
-    draw_vertex_color(_edge[0].x, _edge[0].y, _el.colour, 1);
-    draw_vertex_color(_el.site.x, _el.site.y, _el.colour, 1);
+    
+    draw_vertex_color(_edge[0].x, _edge[0].y, _el.biome, 1);
+    draw_vertex_color(_el.site.x, _el.site.y, _el.biome, 1);
   }
   draw_primitive_end();
 }

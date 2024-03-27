@@ -41,3 +41,8 @@ function gaussian_kernel_2d(_size, _sigma = .5, _mu = 0) {
 
   return _kernel;
 }
+
+/// @func get_perlin_noise([_struct])
+function get_perlin_noise(_struct = {}) {
+  return instance_create_depth(0, 0, 0, oPerlinGenerator, _struct);
+}

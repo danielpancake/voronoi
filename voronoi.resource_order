@@ -1,5 +1,7 @@
 {
   "FolderOrderSettings":[
+    {"name":"Extensions","order":12,"path":"folders/Extensions.yy",},
+    {"name":"GMLive","order":1,"path":"folders/Extensions/GMLive.yy",},
     {"name":"Objects","order":9,"path":"folders/Objects.yy",},
     {"name":"Rooms","order":10,"path":"folders/Rooms.yy",},
     {"name":"Scripts","order":5,"path":"folders/Scripts.yy",},
@@ -7,10 +9,18 @@
     {"name":"Sprites","order":1,"path":"folders/Sprites.yy",},
   ],
   "ResourceOrderSettings":[
+    {"name":"GMLive_fallback","order":1,"path":"extensions/GMLive_fallback/GMLive_fallback.yy",},
+    {"name":"obj_gmlive","order":6,"path":"objects/obj_gmlive/obj_gmlive.yy",},
     {"name":"oDataPoint","order":1,"path":"objects/oDataPoint/oDataPoint.yy",},
     {"name":"oPerlinGenerator","order":2,"path":"objects/oPerlinGenerator/oPerlinGenerator.yy",},
     {"name":"func_basic_geometry","order":3,"path":"scripts/func_basic_geometry/func_basic_geometry.yy",},
+    {"name":"func_biomes","order":5,"path":"scripts/func_biomes/func_biomes.yy",},
+    {"name":"func_buffers","order":6,"path":"scripts/func_buffers/func_buffers.yy",},
     {"name":"func_common","order":4,"path":"scripts/func_common/func_common.yy",},
     {"name":"func_random_numbers","order":1,"path":"scripts/func_random_numbers/func_random_numbers.yy",},
+    {"name":"GMLive_noDeactivate","order":2,"path":"scripts/GMLive_noDeactivate/GMLive_noDeactivate.yy",},
+    {"name":"GMLive_notOnce","order":3,"path":"scripts/GMLive_notOnce/GMLive_notOnce.yy",},
+    {"name":"GMLiveAPI_js","order":5,"path":"scripts/GMLiveAPI_js/GMLiveAPI_js.yy",},
+    {"name":"GMLiveAPI","order":4,"path":"scripts/GMLiveAPI/GMLiveAPI.yy",},
   ],
 }

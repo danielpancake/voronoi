@@ -1,4 +1,6 @@
 /// @desc Setup shader uniforms
+depth = -room_height;
+
 u_resolution = shader_get_uniform(shdr_noise_perlin_2d, "u_resolution");
 u_seed = shader_get_uniform(shdr_noise_perlin_2d, "u_seed");
 u_persistence = shader_get_uniform(shdr_noise_perlin_2d, "u_persistence");
